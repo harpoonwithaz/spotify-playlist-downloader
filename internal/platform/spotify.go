@@ -1,19 +1,16 @@
-package main
+package platform
 
 import (
 	"fmt"
+	"net/url"
+	"path"
+	"spotify-playlist-downloader/internal/models"
 	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
 )
-
-type Song struct {
-	Title       string
-	Artists     []string
-	DurationSec int
-}
 
 // Converts string minute:second format to second int
 // Returns -1 and err if it was unsuccessful
@@ -39,31 +36,37 @@ func toSec(str string) (int, error) {
 	return lengthSeconds, nil
 }
 
-func main() {
-	fmt.Println("Hello world")
+func FetchMetadata(URL string) ([]models.Track, error) {
+	playlistTracks := []models.Track{}
 
-	playlistSongs := []Song{}
+	// Parse the url for playlist ID
+	u, err := url.Parse(URL)
+	if err != nil {
+		return []models.Track{}, fmt.Errorf("error parsing url: %w", err)
+	}
+	playlistID := path.Base(u.Path)
+	scrapeURL := fmt.Sprintf("https://open.spotify.com/embed/playlist/%s", playlistID)
 
-	// Hard coded ID for now
-	playlistID := "0uuSKJdtUWEmgsGHvQbs5O"
-	url := fmt.Sprintf("https://open.spotify.com/embed/playlist/%s", playlistID)
-
+	// scrape the embed HTML for track info
 	c := colly.NewCollector(
 		colly.AllowedDomains("open.spotify.com"),
 	)
 
 	// htmlElm := "ol[aria-label=Track list]"
 	c.OnHTML("li", func(h *colly.HTMLElement) {
-		var currentSong Song
+		var currentTrack models.Track
 
 		title := h.ChildText("h3")
 
+		// Ignore span tag when track is explicit
 		artistRaw := ""
 		h.DOM.Find("h4").Contents().Each(func(i int, s *goquery.Selection) {
 			if goquery.NodeName(s) == "#text" {
 				artistRaw += s.Text()
 			}
 		})
+
+		// Multiple artists
 		artists := strings.Split(artistRaw, "\u00a0")
 		for i, a := range artists {
 			// removes trailing comma for every artist except last
@@ -74,18 +77,20 @@ func main() {
 			}
 		}
 
-		duration, err := toSec(h.ChildText("div[data-testid=duration-cell]"))
+		// convert to seconds from minutes:seconds format
+		durationText := h.ChildText("div[data-testid=duration-cell]")
+		duration, err := toSec(durationText)
 		if err != nil {
-			fmt.Printf("error getting duration: %v", err)
+			fmt.Printf("error converting duration: %v\nDuration text %v\nDuration set to -1", err, durationText)
 		}
 
-		if title != "" && len(artists) != 0 && duration != -1 {
-			fmt.Printf("Title: %s\nMain Artist: *%v*\nDuration: %v\n\n", title, artists, duration)
-			currentSong.Title = title
-			currentSong.Artists = artists
-			currentSong.DurationSec = duration
+		if title != "" && len(artists) != 0 {
+			// fmt.Printf("Title: %s\nMain Artist: *%v*\nDuration: %v\n\n", title, artists, duration)
+			currentTrack.Title = title
+			currentTrack.Artists = artists
+			currentTrack.DurationSec = duration
 
-			playlistSongs = append(playlistSongs, currentSong)
+			playlistTracks = append(playlistTracks, currentTrack)
 		}
 	})
 
@@ -93,5 +98,7 @@ func main() {
 		fmt.Println("Visiting", r.URL.String())
 	})
 
-	c.Visit(url)
+	c.Visit(scrapeURL)
+
+	return playlistTracks, nil
 }
