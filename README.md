@@ -1,2 +1,3 @@
 # spotify-playlist-downloader
- CLI that downloads tracks from a Spottify Playlist
+
+Pretty much a spotify and yt-dlp wrapper

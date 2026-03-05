@@ -36,6 +36,7 @@ func toSec(str string) (int, error) {
 	return lengthSeconds, nil
 }
 
+// Returns the playlist items from a spotify URL as a track struct
 func FetchMetadata(URL string) ([]models.Track, error) {
 	playlistTracks := []models.Track{}
 

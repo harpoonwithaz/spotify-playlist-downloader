@@ -8,8 +8,8 @@ type Track struct {
 	DurationSec int
 }
 
-// FullQuery returns the formatted search string for YouTube (Artist - Title Official Audio).
-func (t Track) FullQuery() string {
+// FullQuery returns the formatted search string for YouTube (Artist - Title {query parameter}).
+func (t Track) FullQuery(queryParam string) string {
 	// Put artists into comma separated format
 	artistString := ""
 	for i, v := range t.Artists {
@@ -20,7 +20,6 @@ func (t Track) FullQuery() string {
 		}
 	}
 
-	cleanTitle := t.Title
-	query := fmt.Sprintf("%s - %s Topic", artistString, cleanTitle)
+	query := fmt.Sprintf("%s - %s %s", artistString, t.Title, queryParam)
 	return query
 }

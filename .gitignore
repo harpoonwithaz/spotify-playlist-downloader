@@ -32,5 +32,8 @@ go.work.sum
 .vscode/
 
 # RANDOM SHIT LOL
-old.go
 test.html
+test_ytdlp.bat
+test_queries.txt
+
+/downloads
