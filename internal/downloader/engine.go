@@ -43,7 +43,7 @@ func DownloadTrack(ctx context.Context, track models.Track, options DownloadOpti
 		// Handle Hard Errors (Network down, binary missing, etc.)
 		if err != nil && !strings.Contains(outputStr, "does not pass filter") {
 			if debugging {
-				fmt.Printf("DEBUG: Hard Error on attempt %d: %v\n", i+1, outputStr)
+				fmt.Printf("[ENGINE] DEBUG: Hard Error on attempt %d: %v\n", i+1, outputStr)
 			}
 			// If it's the last attempt, return the error. Otherwise, try next fallback.
 			if i+1 == maxRetries {
@@ -54,13 +54,13 @@ func DownloadTrack(ctx context.Context, track models.Track, options DownloadOpti
 
 		// Handle Filter Skips
 		if strings.Contains(outputStr, "does not pass filter") {
-			fmt.Printf("Attempt %d: No match within ±%ds. Widening...\n", i+1, tolerance)
+			fmt.Printf("[ENGINE] Attempt %d: No match within ±%ds. Widening...\n", i+1, tolerance)
 			continue
 		}
 
 		// Handle Success
 		if strings.Contains(outputStr, "[download] Destination:") || strings.Contains(outputStr, "has already been downloaded") {
-			fmt.Printf("Success downloading: %s (Tolerance: %ds)\n", track.Title, tolerance)
+			fmt.Printf("[ENGINE] Success downloading: %s (Tolerance: %ds)\n", track.Title, tolerance)
 			return nil
 		}
 	}
