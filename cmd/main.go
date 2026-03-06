@@ -29,8 +29,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Could not load config: %v", err)
 	}
-	if (*cfg).Workers > 5 {
-		fmt.Println("Error: Cannot have more than 5 workers due to rate limiting")
+	if (*cfg).Workers > 5 || (*cfg).Workers < 1 {
+		fmt.Println("Error: Worker amount needs to be > 1 and < 6")
 		return
 	}
 
