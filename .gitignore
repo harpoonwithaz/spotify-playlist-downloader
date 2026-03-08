@@ -32,11 +32,12 @@ go.work.sum
 .vscode/
 
 node_modules
-
+test_files
 
 # RANDOM SHIT LOL
-
 /downloads
+test.go
+test.html
 
 # Build output
 /build/

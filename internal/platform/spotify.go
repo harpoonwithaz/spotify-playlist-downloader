@@ -1,9 +1,8 @@
 package platform
 
 import (
+	"encoding/json"
 	"fmt"
-	"net/url"
-	"path"
 	"strconv"
 	"strings"
 
@@ -37,17 +36,69 @@ func toSec(str string) (int, error) {
 	return lengthSeconds, nil
 }
 
+// I KNOW THIS IS UGLY, BUT THIS IS CUZ SPOTIFY IS SO DUMB
+type SpotifyData struct {
+	Props struct {
+		PageProps struct {
+			State struct {
+				Data struct {
+					Entity struct {
+						Name    string `json:"name"`
+						Artists []struct {
+							Name string `json:"name"`
+						} `json:"artists"`
+						Duration int `json:"duration"`
+					} `json:"entity"`
+				} `json:"data"`
+			} `json:"state"`
+		} `json:"pageProps"`
+	} `json:"props"`
+}
+
+func SpotifyTrackMetadata(scrapeURL string) ([]models.Track, error) {
+	c := colly.NewCollector(colly.AllowedDomains("open.spotify.com"))
+	track := []models.Track{}
+
+	c.OnHTML("script#__NEXT_DATA__", func(e *colly.HTMLElement) {
+		var result SpotifyData
+
+		s := e.Text
+		err := json.Unmarshal([]byte(s), &result)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+		entity := result.Props.PageProps.State.Data.Entity
+
+		currentTrack := models.Track{
+			Title:       entity.Name,
+			DurationSec: entity.Duration / 1000,
+		}
+
+		for _, artist := range entity.Artists {
+			currentTrack.Artists = append(currentTrack.Artists, artist.Name)
+		}
+
+		track = append(track, currentTrack)
+	})
+
+	c.Visit(scrapeURL)
+
+	return track, nil
+}
+
 // Returns the playlist items from a spotify URL as a track struct
-func FetchMetadata(URL string) ([]models.Track, error) {
+func SpotifyPlaylistMetadata(scrapeURL string) ([]models.Track, error) {
 	playlistTracks := []models.Track{}
 
 	// Parse the url for playlist ID
-	u, err := url.Parse(URL)
-	if err != nil {
-		return []models.Track{}, fmt.Errorf("error parsing url: %w", err)
-	}
-	playlistID := path.Base(u.Path)
-	scrapeURL := fmt.Sprintf("https://open.spotify.com/embed/playlist/%s", playlistID)
+	// u, err := url.Parse(URL)
+	// if err != nil {
+	// 	return []models.Track{}, fmt.Errorf("error parsing url: %w", err)
+	// }
+	// playlistID := path.Base(u.Path)
+	// scrapeURL := fmt.Sprintf("https://open.spotify.com/embed/playlist/%s", playlistID)
 
 	// scrape the embed HTML for track info
 	c := colly.NewCollector(
