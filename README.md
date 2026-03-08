@@ -18,3 +18,8 @@ Pretty much a spotify and yt-dlp wrapper
 - [ ] BPM embeding
 - [ ] Download Progress bar
 - [ ] Other platforms
+
+## Current limitaions
+
+- Spotify limited to 100 songs per playlist
+- Can't download indiviudal songs
