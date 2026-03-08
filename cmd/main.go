@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"spotify-playlist-downloader/internal/downloader"
-	"spotify-playlist-downloader/internal/models"
-	"spotify-playlist-downloader/internal/platform"
+	"GoDown/internal/downloader"
+	"GoDown/internal/models"
+	"GoDown/internal/platform"
 )
 
 func main() {

@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
-	"spotify-playlist-downloader/internal/models"
 	"strings"
+
+	"GoDown/internal/models"
 )
 
 // Download individual track using yt-dlp

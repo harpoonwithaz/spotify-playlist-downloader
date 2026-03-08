@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/url"
 	"path"
-	"spotify-playlist-downloader/internal/models"
 	"strconv"
 	"strings"
+
+	"GoDown/internal/models"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
