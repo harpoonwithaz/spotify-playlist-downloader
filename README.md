@@ -2,6 +2,10 @@
 
 Pretty much a spotify and yt-dlp wrapper
 
+## Sample
+
+![Example](.github/assets/example_screenshot.png)
+
 ## Config
 
 | Name | Description | Default |

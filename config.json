@@ -1,13 +1,13 @@
 {
-    "download_path": "C:\\Users\\Oliver\\Downloads",
+    "download_path": "Y:\\Audio\\Music Library\\GoDown",
     "workers": 3,
     "retries": [
         {
-            "query_suffix": "Topic",
+            "query_suffix": "Official Audio",
             "tolerance": 5
         },
         {
-            "query_suffix": "Official Audio",
+            "query_suffix": "Topic",
             "tolerance": 15
         },
         {

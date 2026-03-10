@@ -6,6 +6,7 @@ type Track struct {
 	Title       string
 	Artists     []string
 	DurationSec int
+	ArtURL      string
 }
 
 // FullQuery returns the formatted search string for YouTube (Artist - Title {query parameter}).
@@ -22,4 +23,13 @@ func (t Track) FullQuery(queryParam string) string {
 
 	query := fmt.Sprintf("%s - %s %s", artistString, t.Title, queryParam)
 	return query
+}
+
+// MainArtistQuery returns a query using only the first artist.
+func (t Track) MainArtistQuery(queryParam string) string {
+	if len(t.Artists) == 0 {
+		return fmt.Sprintf("%s %s", t.Title, queryParam)
+	}
+	// Only takes the first artist in the slice
+	return fmt.Sprintf("%s - %s %s", t.Artists[0], t.Title, queryParam)
 }

@@ -42,7 +42,8 @@ test_files/
 # Misc
 /downloads/
 test.go
-test.html
+track_embed.html
+playlist_embed.html
 
 # Build output
 /build/
@@ -63,6 +64,8 @@ test.html
 
 # Wails runtime/node modules
 /wailsjs/runtime/node_modules/
+
+playlist_embed_files
 
 # OS files
 .DS_Store

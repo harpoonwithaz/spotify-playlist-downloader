@@ -75,9 +75,10 @@ func (a *App) DownloadPlaylist(url string) string {
 	// 1. Queue them all immediately so the UI creates the divs
 	for _, t := range tracks {
 		runtime.EventsEmit(a.ctx, "download_progress", map[string]interface{}{
-			"id":     getID(t),
-			"title":  t.Title,
-			"status": "Queued",
+			"id":      getID(t),
+			"title":   t.Title,
+			"status":  "Queued",
+			"art_url": t.ArtURL,
 		})
 	}
 

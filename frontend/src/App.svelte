@@ -32,6 +32,10 @@
   let elapsed = "00:00:00";
   let timer = null;
 
+  let albumArt = null;
+  // show album art from the first active download when available
+  $: albumArt = activeDownloads.length ? (activeDownloads[0].album_art || activeDownloads[0].art_url || null) : null;
+
   $: completedCount = activeDownloads.filter(
     (t) => t.status === "Completed",
   ).length;
@@ -253,19 +257,33 @@
     {/if}
   </div>
   <div class="total-progress-container" aria-live="polite">
-    <div class="total-progress-header">
-      <div class="left">
-        Downloaded {completedCount} of {totalTracks || activeDownloads.length}
+    <div class="progress-top">
+      <div
+        class="album-art"
+        style="background-image: {albumArt ? `url(${albumArt})` : 'none'}"
+        aria-hidden={albumArt ? "false" : "true"}
+      >
+        {#if !albumArt}
+          <div class="album-placeholder">No art</div>
+        {/if}
       </div>
-      <div class="right">{percent}%</div>
-    </div>
-    <div class="total-progress-bar">
-      <div class="total-progress-fill" style="width: {percent}%"></div>
-    </div>
-    <div class="total-progress-meta">
-      <span>Time: {elapsed}</span>
-      <span>Skipped: {skippedCount}</span>
-      <span>Failed: {failedCount}</span>
+
+      <div class="progress-main">
+        <div class="total-progress-header">
+          <div class="left">Downloaded {completedCount} of {totalTracks || activeDownloads.length}</div>
+          <div class="right">{percent}%</div>
+        </div>
+
+        <div class="total-progress-bar">
+          <div class="total-progress-fill" style="width: {percent}%"></div>
+        </div>
+
+        <div class="total-progress-meta">
+          <span>Time: {elapsed}</span>
+          <span>Skipped: {skippedCount}</span>
+          <span>Failed: {failedCount}</span>
+        </div>
+      </div>
     </div>
   </div>
 

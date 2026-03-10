@@ -320,6 +320,38 @@ button.primary {
 }
 
 /* Total progress container (single bar for all downloads) */
+/* Progress + album art layout */
+.progress-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.album-art {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  background-color: var(--downloads-bg);
+  background-size: cover;
+  background-position: center;
+  flex: 0 0 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.album-art .album-placeholder {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+.progress-main { flex: 1; }
+
+/* Responsive: stack on narrow screens */
+@media (max-width: 520px) {
+  .progress-top { flex-direction: column; align-items: stretch; }
+  .album-art { width: 100%; height: 160px; flex: none; border-radius: 6px; }
+}
+
 .total-progress-container {
     margin-top: 24px;
     padding: 12px;
